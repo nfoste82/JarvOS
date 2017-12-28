@@ -8,64 +8,26 @@ namespace JarvOS
     {
         static void Main(string[] args)
         {
-            if (args.Any())
-            {
-                Console.WriteLine("Args:");
-            }
+            // Uncomment this and pass these args to EntryPoint if you want to be able to attach
+            // and debug command line arguments.
+            //string[] fakeArgs = new string[]{"-o", "1313 Disneyland Dr, Anaheim, CA 92802", "-d", "Walt Disney World Resort, Orlando, FL 32830"};
+            
+            EntryPoint(args);
+        }
 
-            foreach (string arg in args)
-            {
-                Console.WriteLine(arg);
-            }
-
+        static void EntryPoint(string[] args)
+        {
+            // Some defaults to use if nothing is passed in.
             string origin = "1313 Disneyland Dr, Anaheim, CA 92802";
-            string destination = "1600 Pennsylvania Ave NW, Washington, DC 20500";
-            for (int i = 0; i < args.Length; ++i)
-            {
-                if (args[i] == "-o")
-                {
-                    if ((i + 1) < args.Length)
-                    {
-                        string originStart = args[i + 1];
-                        if (originStart[0] != '"')
-                        {
-                            throw new System.ApplicationException("Origin address must be wrapped in quotations.");
-                        }
-                        i += 2;
+            string destination = "Walt Disney World Resort, Orlando, FL 32830";
 
-                        while (i < args.Length)
-                        {
-                            originStart += args[i];
-                            if (originStart.EndsWith('"'))
-                            {
-                                break;
-                            }
-                        }
-
-                    }
-                }
-                else if (args[i] == "-d")
-                {
-                    if ((i + 1) < args.Length)
-                    {
-                        string destinationStart = args[i + 1];
-                        if (destinationStart[0] != '"')
-                        {
-                            throw new System.ApplicationException("Origin address must be wrapped in quotations.");
-                        }
-                        i += 2;
-
-                        while (i < args.Length)
-                        {
-                            destinationStart += args[i];
-                            if (destinationStart.EndsWith('"'))
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+            bool help   = false;
+            var p = new NDesk.Options.OptionSet () {
+                { "h|?|help",   v => help = v != null },
+                { "o|origin=",   v => origin = v },
+                { "d|destination=",   v => destination = v }
+            };
+            p.Parse(args);
 
 			Directions dir = new Directions(origin, destination);
 
